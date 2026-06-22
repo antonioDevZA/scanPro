@@ -20,6 +20,16 @@ DEFAULT_EXTENSIONS = {
 
 
 def scan_documents(directory: str | Path, extensions: set[str] | None = None) -> list[dict[str, int | str]]:
+    """Recursively find supported document files in a directory.
+
+    Args:
+        directory: Root directory to scan.
+        extensions: Optional set of file extensions to include (e.g. {".pdf"}).
+
+    Returns:
+        A list of dictionaries containing the file's path relative to `directory`
+        and its size in bytes.
+    """
     root = Path(directory)
     if not root.exists():
         raise FileNotFoundError(f"Directory does not exist: {root}")
@@ -43,6 +53,11 @@ def scan_documents(directory: str | Path, extensions: set[str] | None = None) ->
 
 
 def main() -> int:
+    """Run the scanner CLI.
+
+    Returns:
+        0 when scanning succeeds, otherwise 1 for a user input error.
+    """
     parser = argparse.ArgumentParser(
         description="Recursively scan a directory for document files."
     )
