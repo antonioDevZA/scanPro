@@ -4,6 +4,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import TypedDict
 
 DEFAULT_EXTENSIONS = {
     ".pdf",
@@ -19,7 +20,12 @@ DEFAULT_EXTENSIONS = {
 }
 
 
-def scan_documents(directory: str | Path, extensions: set[str] | None = None) -> list[dict[str, int | str]]:
+class ScanResult(TypedDict):
+    path: str
+    size_bytes: int
+
+
+def scan_documents(directory: str | Path, extensions: set[str] | None = None) -> list[ScanResult]:
     """Recursively find supported document files in a directory.
 
     Args:
@@ -37,7 +43,7 @@ def scan_documents(directory: str | Path, extensions: set[str] | None = None) ->
         raise NotADirectoryError(f"Path is not a directory: {root}")
 
     allowed_extensions = {ext.lower() for ext in (extensions or DEFAULT_EXTENSIONS)}
-    matches: list[dict[str, int | str]] = []
+    matches: list[ScanResult] = []
 
     for path in sorted(root.rglob("*")):
         if path.is_file() and path.suffix.lower() in allowed_extensions:
