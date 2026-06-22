@@ -1,3 +1,5 @@
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -18,10 +20,8 @@ class ScanDocumentsTests(unittest.TestCase):
 
             scanned = scan_documents(root)
 
-            self.assertEqual(
-                [item["path"] for item in scanned],
-                ["invoice.pdf", "nested/photo.jpg", "notes.TXT"],
-            )
+            expected_paths = sorted(["invoice.pdf", "nested/photo.jpg", "notes.TXT"])
+            self.assertEqual([item["path"] for item in scanned], expected_paths)
             self.assertTrue(all(item["size_bytes"] > 0 for item in scanned))
 
     def test_scan_documents_raises_when_directory_is_missing(self) -> None:
@@ -29,6 +29,16 @@ class ScanDocumentsTests(unittest.TestCase):
             missing = Path(tmpdir) / "missing"
             with self.assertRaises(FileNotFoundError):
                 scan_documents(missing)
+
+    def test_cli_returns_error_for_missing_directory(self) -> None:
+        result = subprocess.run(
+            [sys.executable, "scanner.py", "missing-path"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("Directory does not exist", result.stderr)
 
 
 if __name__ == "__main__":

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 DEFAULT_EXTENSIONS = {
@@ -41,15 +42,22 @@ def scan_documents(directory: str | Path, extensions: set[str] | None = None) ->
     return matches
 
 
-def main() -> None:
+def main() -> int:
     parser = argparse.ArgumentParser(
         description="Recursively scan a directory for document files."
     )
     parser.add_argument("directory", help="Directory to scan")
     args = parser.parse_args()
 
-    print(json.dumps(scan_documents(args.directory), indent=2))
+    try:
+        result = scan_documents(args.directory)
+    except (FileNotFoundError, NotADirectoryError) as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+
+    print(json.dumps(result, indent=2))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
