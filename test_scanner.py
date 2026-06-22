@@ -23,7 +23,6 @@ class ScanDocumentsTests(unittest.TestCase):
             actual_paths = [item["path"] for item in scanned]
             expected_paths = ["invoice.pdf", "nested/photo.jpg", "notes.TXT"]
             self.assertEqual(sorted(actual_paths), sorted(expected_paths))
-            self.assertIn("notes.TXT", actual_paths)
             self.assertTrue(all(item["size_bytes"] > 0 for item in scanned))
 
     def test_scan_documents_raises_when_directory_is_missing(self) -> None:
