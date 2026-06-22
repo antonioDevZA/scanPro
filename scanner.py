@@ -45,16 +45,17 @@ def scan_documents(directory: str | Path, extensions: set[str] | None = None) ->
     allowed_extensions = {ext.lower() for ext in (extensions or DEFAULT_EXTENSIONS)}
     matches: list[ScanResult] = []
 
-    for path in sorted(root.rglob("*")):
+    for path in root.rglob("*"):
         if path.is_file() and path.suffix.lower() in allowed_extensions:
             stat = path.stat()
             matches.append(
                 {
-                    "path": str(path.relative_to(root)),
+                    "path": path.relative_to(root).as_posix(),
                     "size_bytes": stat.st_size,
                 }
             )
 
+    matches.sort(key=lambda item: item["path"])
     return matches
 
 
