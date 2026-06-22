@@ -25,8 +25,10 @@ class ScanDocumentsTests(unittest.TestCase):
             self.assertTrue(all(item["size_bytes"] > 0 for item in scanned))
 
     def test_scan_documents_raises_when_directory_is_missing(self) -> None:
-        with self.assertRaises(FileNotFoundError):
-            scan_documents("/path/does/not/exist")
+        with tempfile.TemporaryDirectory() as tmpdir:
+            missing = Path(tmpdir) / "missing"
+            with self.assertRaises(FileNotFoundError):
+                scan_documents(missing)
 
 
 if __name__ == "__main__":

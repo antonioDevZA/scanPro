@@ -42,7 +42,9 @@ def scan_documents(directory: str | Path, extensions: set[str] | None = None) ->
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Scan a directory for document files.")
+    parser = argparse.ArgumentParser(
+        description="Recursively scan a directory for document files."
+    )
     parser.add_argument("directory", help="Directory to scan")
     args = parser.parse_args()
 
